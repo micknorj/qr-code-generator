@@ -55,10 +55,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .export{padding-top:14px;border-top:1px solid var(--border)}.export-grid{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px}.filename{grid-column:1/-1}.copy-data{margin-top:12px}
 .output-actions{min-height:64px;padding:12px 14px;display:flex;align-items:center;justify-content:flex-end;gap:8px;border-top:1px solid var(--border);background:color-mix(in srgb,var(--surface) 90%,var(--control))}.action-msg{margin-right:auto;color:var(--subtle);font-size:.72rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-.local-note{max-width:760px;margin:12px auto 0;padding:0 12px;color:var(--subtle);font-size:.7rem;line-height:1.55;text-align:center}
+.local-note{width:100%;max-width:none;margin:12px auto 0;padding:0 12px;color:var(--subtle);font-size:.7rem;line-height:1.55;text-align:center;white-space:nowrap}
 .site-credit{flex-shrink:0;width:100%;margin-top:28px;padding-top:14px;color:var(--subtle);font-size:.7rem;line-height:1.6;text-align:center}.site-credit a{color:var(--muted);font-weight:650;text-decoration:none}.site-credit a:hover{color:var(--text);text-decoration:underline;text-underline-offset:3px}
 
-@media(max-width:980px){body{padding:18px 16px 12px}.page{display:block}.app{margin:auto}.shell{height:auto;grid-template-columns:1fr}.output-body{display:grid;grid-template-columns:minmax(240px,360px) minmax(0,1fr);align-content:start}.qr-box{grid-row:1/span 2}}
+@media(max-width:980px){body{padding:18px 16px 12px}.page{display:block}.app{margin:auto}.shell{height:auto;grid-template-columns:1fr}.output-body{display:grid;grid-template-columns:minmax(240px,360px) minmax(0,1fr);align-content:start}.qr-box{grid-row:1/span 2}.local-note{white-space:normal}}
 @media(max-width:720px){body{padding:16px}.category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.field-grid{grid-template-columns:1fr}.output-body{display:flex}.qr-box,.payload,.export{width:100%}.btn{min-height:36px;padding:0 12px;font-size:.78rem}.row-select{width:135px}.range{width:150px}}
 @media(max-width:520px){body{padding:12px}.header{align-items:center}.eyebrow{font-size:.76rem}h1{font-size:1.48rem}.appearance{min-height:34px;padding:0 10px;font-size:.7rem}.section,.output-body{padding:15px}.setting{align-items:flex-start;padding:10px 0}.setting.compact{align-items:center}.row-select{width:125px}.color-row{flex-direction:column;align-items:flex-end}.range{width:120px}.export-grid{grid-template-columns:1fr}.filename{grid-column:auto}.action-msg{display:none}.local-note{margin-top:10px;padding:0 6px;font-size:.67rem}.site-credit{margin-top:24px;padding-top:10px;font-size:.67rem}}
 </style>
@@ -138,6 +138,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
         <div class="setting"><strong>Direction</strong><div class="range"><input id="gradientRotation" class="qr-control" type="range" min="0" max="360" value="45"><span id="gradientRotationValue">45°</span></div></div>
       </div>
     </div>
+
     <div id="contrastNotice" class="notice" style="margin-top:12px"></div>
   </div>
 
@@ -209,7 +210,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 </main>
 </div>
 
-<footer class="site-credit">© 2026 Mick · Mick's Tools · <a href="https://github.com/micknorj" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
+<footer class="site-credit">© 2026 Mick · Mick's Tools · <a href="https://github.com/YOUR_GITHUB_USERNAME" target="_blank" rel="noopener noreferrer">GitHub</a></footer>
 
 <script src="./vendor/qr-code-styling.js"></script>
 <script>
@@ -220,11 +221,7 @@ const state={category:"link",type:"url",values:{},qr:null,logo:null,lastPayload:
 
 /* Appearance */
 const media=matchMedia("(prefers-color-scheme: dark)");
-function applyTheme(){
-  const theme=state.appearance==="system"?(media.matches?"dark":"light"):state.appearance;
-  document.documentElement.dataset.theme=theme;
-  $("#appearance").textContent=`Appearance · ${{system:"System",light:"Light",dark:"Dark"}[state.appearance]}`;
-}
+function applyTheme(){const theme=state.appearance==="system"?(media.matches?"dark":"light"):state.appearance;document.documentElement.dataset.theme=theme;$("#appearance").textContent=`Appearance · ${{system:"System",light:"Light",dark:"Dark"}[state.appearance]}`}
 $("#appearance").onclick=()=>{const m=["system","light","dark"];state.appearance=m[(m.indexOf(state.appearance)+1)%m.length];applyTheme()};
 media.addEventListener?.("change",()=>state.appearance==="system"&&applyTheme());
 
@@ -293,7 +290,8 @@ function payload(){
     }
     case"event":{
       if(!v.title&&!v.start&&!v.end&&!v.location&&!v.description)return"";
-      const l=["BEGIN:VCALENDAR","VERSION:2.0","BEGIN:VEVENT"];if(v.title)l.push(`SUMMARY:${esc(v.title)}`);if(v.start)l.push(`DTSTART:${icsDate(v.start)}`);if(v.end)l.push(`DTEND:${icsDate(v.end)}`);if(v.location)l.push(`LOCATION:${esc(v.location)}`);if(v.description)l.push(`DESCRIPTION:${esc(v.description)}`);l.push("END:VEVENT","END:VCALENDAR");return l.join("\n");
+      const l=["BEGIN:VCALENDAR","VERSION:2.0","BEGIN:VEVENT"];
+      if(v.title)l.push(`SUMMARY:${esc(v.title)}`);if(v.start)l.push(`DTSTART:${icsDate(v.start)}`);if(v.end)l.push(`DTEND:${icsDate(v.end)}`);if(v.location)l.push(`LOCATION:${esc(v.location)}`);if(v.description)l.push(`DESCRIPTION:${esc(v.description)}`);l.push("END:VEVENT","END:VCALENDAR");return l.join("\n");
     }
     case"raw":return String(v.raw||"");
     default:return"";
@@ -353,7 +351,7 @@ $("#logoInput").onchange=async e=>{
   try{state.logo=await normalizeLogo(file);state.qr=null;$("#logoName").textContent=file.name;$("#logoFile").classList.add("visible");$("#errorCorrection").value="H";readouts();changed()}
   catch(err){state.logo=null;state.qr=null;e.target.value="";$("#logoFile").classList.remove("visible");$("#logoError").textContent=err.message;$("#logoError").hidden=false}
 };
-$("#removeLogo").onclick=()=>{state.logo=null;state.qr=null;$("#logoInput").value="";$("#logoFile").classList.remove("visible");changed()};
+$("#removeLogo").onclick=()=>{state.logo=null;state.qr=null;$("#logoInput").value="";$("#logoName").textContent="";$("#logoFile").classList.remove("visible");$("#logoError").hidden=true;changed()};
 
 /* Readouts */
 function lum(hex){const x=hex.slice(1).match(/../g).map(v=>parseInt(v,16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4));return .2126*x[0]+.7152*x[1]+.0722*x[2]}
