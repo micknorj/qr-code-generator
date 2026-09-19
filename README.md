@@ -35,7 +35,7 @@ The site is hosted on [GitHub Pages](https://pages.github.com/), which may proce
 
 This project uses [qr-code-styling](https://github.com/kozakdenys/qr-code-styling) by Denys Kozak under the MIT License.
 
-See the bundled [third-party license](vendor/qr-code-styling.LICENSE).
+See the bundled [third-party license](vendor/qr-code-styling.LICENSE.txt).
 
 ## License
 
